@@ -1,0 +1,165 @@
+openapi: 3.0.0
+paths:
+  /zones:
+    post:
+      operationId: ZonesController_createZone
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateZoneDto"
+      responses:
+        "201":
+          description: Zona creada exitosamente
+      summary: Crear una nueva zona
+      tags:
+        - Zonas
+        - Zonas
+    get:
+      operationId: ZonesController_findAll
+      parameters: []
+      responses:
+        "200":
+          description: Listado de zonas, con geometría en formato GeoJSON
+      summary: Obtener zonas
+      tags:
+        - Zonas
+        - Zonas
+  /cattle/location:
+    patch:
+      operationId: CattleController_updateCowLocation
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLocationDTO"
+      responses:
+        "200":
+          description: Ubicación actualizada.
+          content:
+            application/json:
+              examples:
+                withZoneUpdate:
+                  summary: El dispositivo de la vaca tiene una verisón antigua de la zona.
+                  value:
+                    id: 1
+                    name: Zona 1
+                    description: Zona al lado del lago
+                    geom:
+                      type: Polygon
+                      coordinates:
+                        - - - -58.3816
+                            - -34.6037
+                          - - -58.38
+                            - -34.603
+                          - - -58.379
+                            - -34.604
+                          - - -58.3816
+                            - -34.6037
+                    version: 2
+                noUpdate:
+                  summary: El dispositivo de la vaca tiene la versión actual de la zona.
+                  value: null
+      summary: Actualizar localización de la vaca
+      tags:
+        - Ganado
+        - Ganado
+  /cattle/new-cattle:
+    post:
+      operationId: CattleController_createCow
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCowDTO"
+      responses:
+        "201":
+          description: Vaca creada exitosamente
+      summary: Crear nueva vaca
+      tags:
+        - Ganado
+        - Ganado
+info:
+  title: GeoVacas API
+  description: Documentación relacionada a los endpoints de la API
+  version: "1.0"
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas:
+    CreateZoneDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Zona 1
+          description: Nombre de la zona
+        coordinates:
+          example:
+            - - -34.6037
+              - -58.3816
+            - - -34.603
+              - -58.38
+            - - -34.604
+              - -58.379
+          description: Puntos que definen a la zona
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+          example: Zona de pruebas
+          description: Descripción de la zona
+      required:
+        - name
+        - coordinates
+        - description
+    UpdateLocationDTO:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+          description: Id de la vaca
+        lat:
+          type: number
+          example: -34.6037
+          description: Coordenada de latitud de la vaca
+        long:
+          type: number
+          example: -58.3816
+          description: Coordenada de longitud de la vaca
+        timestamp:
+          format: date-time
+          type: string
+          description: Tiempo en el cual la vaca modificó su localización
+        zoneVersion:
+          type: number
+          example: 1
+          description: Versión de zona que tiene la vaca
+      required:
+        - id
+        - lat
+        - long
+        - zoneVersion
+    CreateCowDTO:
+      type: object
+      properties:
+        deviceId:
+          type: string
+          example: 1
+          description: Identificador del dispositivo
+        zoneId:
+          type: string
+          example: 1
+          description: Identificador de la zona a la cual estará vinculada la vaca
+      required:
+        - deviceId
+        - zoneId
