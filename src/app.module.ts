@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getTypeOrmConfig } from './database/typeorm.config';
 import { DataSource } from 'typeorm';
 import { CattleModule } from './cattle/cattle.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { CattleModule } from './cattle/cattle.module';
         UsersModule,
         ZonesModule,
         CattleModule,
+        AuthModule,
     ],
 })
 export class AppModule {

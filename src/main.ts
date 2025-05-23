@@ -3,14 +3,20 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as YAML from 'yaml';
 import { writeFileSync } from 'fs';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule, { 
+    const app = await NestFactory.create(AppModule, {
         cors: true,
-        logger: process.env.NODE_ENV === 'production' 
-            ? ['error', 'warn'] 
+        logger: process.env.NODE_ENV === 'production'
+            ? ['error', 'warn']
             : ['error', 'warn', 'log', 'debug']
     });
+
+    app.useGlobalPipes(new ValidationPipe({
+        whitelist: true,
+        transform: true,
+    }));
 
     if (process.env.NODE_ENV !== 'production') {
         const config = new DocumentBuilder()
@@ -28,3 +34,4 @@ async function bootstrap() {
 }
 
 bootstrap();
+
