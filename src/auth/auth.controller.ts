@@ -20,12 +20,9 @@ export class AuthController {
     })
     async login(@Body() loginDto: LoginDto) {
         try {
-            return await this.authService.login(loginDto.username, loginDto.password);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                throw new UnauthorizedException(error.message);
-            }
-            throw new UnauthorizedException('Authentication failed');
+            return await this.authService.login(loginDto);
+        } catch (error) {
+            throw new UnauthorizedException(error.message);
         }
     }
 }
