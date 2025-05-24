@@ -4,14 +4,20 @@ import { Zone } from '../zones/zone.entity';
 import { Cattle } from '../cattle/entity/cattle.entity';
 import { webcrypto } from 'node:crypto';
 
-// Ensure crypto is available globally
-if (!global.crypto) {
-    global.crypto = webcrypto as any;
+try {
+    if (typeof globalThis.crypto === 'undefined') {
+        // @ts-expect-error - webcrypto is compatible with the expected Crypto interface
+        globalThis.crypto = webcrypto;
+    }
+} catch (err) {
+    if (err instanceof Error) {
+        console.warn('Unable to assign globalThis.crypto:', err.message);
+    }
 }
 
-export const getTypeOrmConfig = async (
+export const getTypeOrmConfig = (
     configService: ConfigService,
-): Promise<TypeOrmModuleOptions> => ({
+): TypeOrmModuleOptions => ({
     type: 'postgres',
     host: configService.get('DB_HOST'),
     port: configService.get('DB_PORT'),
