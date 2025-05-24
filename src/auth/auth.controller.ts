@@ -22,7 +22,10 @@ export class AuthController {
         try {
             return await this.authService.login(loginDto);
         } catch (error) {
-            throw new UnauthorizedException(error.message);
+            if (error instanceof Error) {
+                throw new UnauthorizedException(error.message);
+            }
+            throw new UnauthorizedException('Authentication failed');
         }
     }
 }
