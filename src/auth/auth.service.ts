@@ -5,14 +5,15 @@ import {
   NotAuthorizedException,
   UserNotFoundException,
 } from '@aws-sdk/client-cognito-identity-provider';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   private cognitoClient: CognitoIdentityProviderClient;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     this.cognitoClient = new CognitoIdentityProviderClient({
-      region: process.env.AWS_REGION,
+      region: this.configService.get<string>('AWS_REGION'),
     });
   }
 
@@ -20,7 +21,7 @@ export class AuthService {
     try {
       const command = new InitiateAuthCommand({
         AuthFlow: 'USER_PASSWORD_AUTH',
-        ClientId: process.env.COGNITO_CLIENT_ID,
+        ClientId: this.configService.get<string>('COGNITO_CLIENT_ID'),
         AuthParameters: {
           USERNAME: username,
           PASSWORD: password,
