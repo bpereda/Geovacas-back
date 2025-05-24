@@ -12,7 +12,10 @@ import { AuthModule } from './auth/auth.module';
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: `.env.${process.env.NODE_ENV}.local`,
+            // Only load .env file in development
+            envFilePath: process.env.NODE_ENV === 'development' ? '.env' : undefined,
+            // Always load environment variables from the system
+            ignoreEnvFile: process.env.NODE_ENV === 'production',
         }),
         TypeOrmModule.forRootAsync({
             inject: [ConfigService],
