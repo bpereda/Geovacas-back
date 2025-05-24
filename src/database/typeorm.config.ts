@@ -2,10 +2,16 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Zone } from '../zones/zone.entity';
 import { Cattle } from '../cattle/entity/cattle.entity';
+import { webcrypto } from 'node:crypto';
 
-export const getTypeOrmConfig = (
+// Ensure crypto is available globally
+if (!global.crypto) {
+    global.crypto = webcrypto as any;
+}
+
+export const getTypeOrmConfig = async (
     configService: ConfigService,
-): TypeOrmModuleOptions => ({
+): Promise<TypeOrmModuleOptions> => ({
     type: 'postgres',
     host: configService.get('DB_HOST'),
     port: configService.get('DB_PORT'),

@@ -4,6 +4,7 @@ import {
   InitiateAuthCommand,
   NotAuthorizedException,
   UserNotFoundException,
+  type CognitoIdentityProviderClientConfig,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { ConfigService } from '@nestjs/config';
 
@@ -12,9 +13,23 @@ export class AuthService {
   private cognitoClient: CognitoIdentityProviderClient;
 
   constructor(private configService: ConfigService) {
-    this.cognitoClient = new CognitoIdentityProviderClient({
-      region: this.configService.get<string>('AWS_REGION'),
-    });
+    const region = this.configService.get<string>('AWS_REGION');
+    const accessKeyId = this.configService.get<string>('aws_access_key_id');
+    const secretAccessKey = this.configService.get<string>('aws_secret_access_key');
+
+    if (!region || !accessKeyId || !secretAccessKey) {
+      throw new Error('Missing AWS configuration. Please check your environment variables.');
+    }
+
+    const config: CognitoIdentityProviderClientConfig = {
+      region,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+    };
+
+    this.cognitoClient = new CognitoIdentityProviderClient(config);
   }
 
   async login(username: string, password: string) {
