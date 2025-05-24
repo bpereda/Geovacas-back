@@ -1,6 +1,9 @@
 import { webcrypto } from 'node:crypto';
-if (!global.crypto) {
-    global.crypto = webcrypto as any;
+
+// Use globalThis instead of global to avoid readonly variable error
+if (typeof globalThis.crypto === 'undefined') {
+    // @ts-expect-error - webcrypto is compatible with the expected Crypto interface
+    globalThis.crypto = webcrypto;
 }
 
 import { NestFactory } from '@nestjs/core';
